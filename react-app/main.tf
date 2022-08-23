@@ -26,11 +26,6 @@ resource "aws_s3_bucket_acl" "bucket" {
 }
 
 # Policy and document
-resource "aws_s3_bucket_policy" "bucket" {
-  bucket = "${aws_s3_bucket.bucket.bucket}"
-  policy = data.aws_iam_policy_document.bucket.json
-}
-
 data "aws_iam_policy_document" "bucket" {
   statement {
     principals {
@@ -44,6 +39,11 @@ data "aws_iam_policy_document" "bucket" {
   }
 }
 
+resource "aws_s3_bucket_policy" "bucket" {
+  bucket = "${aws_s3_bucket.bucket.bucket}"
+  policy = data.aws_iam_policy_document.bucket.json
+}
+
 # Access identity, policy and document for the development CDN
 
 locals {
@@ -52,6 +52,23 @@ locals {
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "CloudFront Origin Access Identity for ${var.stack_name}-${var.app}-${var.region}-builds"
+}
+
+data "aws_iam_policy_document" "cdn" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.bucket.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "cdn" {
+  bucket = aws_s3_bucket.bucket.id
+  policy = data.aws_iam_policy_document.cdn.json
 }
 
 resource "aws_cloudfront_distribution" "distribution" {
