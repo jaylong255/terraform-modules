@@ -3,7 +3,7 @@
 Hellur. Welcome to opening a pull request, yo. Thank you for contributing! (probably)
 Review the checklist and do as commanded. If you have questions ask the
 [code owners](https://github.com/jaylong255/terraform-modules/blob/master/.github/CODEOWNERS)
-Shout-out to Ferris at Urban Dynamics for this tempalate format. I totally ripped this from
+Shout-out to Ferris at Urban Dynamics for this template format. I totally ripped this from
 one of his.
 
 ### About PR reviews
